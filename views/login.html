@@ -1,0 +1,13 @@
+<div id="login" ng-controller="LoginController">
+	<p>Hi!</p>
+	<span ng-show="user">
+		{{user.email}} | <a href="#/projects">Projects</a>
+		<hr />
+		<a ng-click="logout()">Logout</a>
+	</span>
+	<span ng-hide="user">
+		<input type="text" name="username" ng-model="login_form.email"><br>
+		<input type="password" name="password" ng-model="login_form.password"><br>
+		<button name="login" id="login" ng-click="login()">login</button>
+</span>
+</div>
