@@ -15,24 +15,18 @@ app.config(['$locationProvider', '$routeProvider',
         controller: 'ProjectChannelController',
         authRequired: 'true'
       }).
-      when('/login', {
-        templateUrl: 'views/login.html',
-        controller: 'LoginController',
-        authRequired: 'false'
-      }).
       otherwise({
-        redirectTo: '/login'
+        redirectTo: ''
       });
   }]);
 
-app.controller('LoginController', ['$scope','angularFireAuth',function($scope, angularFireAuth){
+app.controller('AuthController', ['$scope','$location','angularFireAuth',function($scope, $location,angularFireAuth){
     var url = "https://320ny.firebaseio.com/";
     var firebase = new Firebase(url);
     $scope.login_form= {};
     angularFireAuth.initialize(firebase, {
       scope: $scope, name: "user",
       callback: function(err, user) {
-        // Called whenever there is a change in authentication state.
       }
     });
 
@@ -47,4 +41,20 @@ app.controller('LoginController', ['$scope','angularFireAuth',function($scope, a
     $scope.logout = function() {
       angularFireAuth.logout();
     };
+
+    $scope.$on("angularFireAuth:login", function(evt, user) {
+      $location.path("/projects");
+    });
+    $scope.$on("angularFireAuth:logout", function(evt) {
+      $location.path("#");
+    });
+    $scope.$on("angularFireAuth:error", function(evt, err) {
+      console.log(err);
+    });
+
+}]);
+
+app.controller('ProjectShowController', ['$scope', 'angularFire', function($scope){
+  var url = "https://320ny.firebaseio.com/"
+  var firebase = new Firebase(url);
 }]);

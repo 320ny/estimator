@@ -7,8 +7,20 @@
     <script src='https://cdn.firebase.com/libs/angularfire/0.3.0/angularfire.min.js'></script>
     <script src="javascript/app.js"></script>
   </head>
-  <body>
-  	<div ng-view>
-  	</div>
+  <body ng-controller="AuthController">
+    <div id="login">
+      <span ng-show="user">
+        {{user.email}} | <a href="#/projects">Projects</a> | <a href="#" ng-click="logout()">Logout</a>
+        <hr />
+      </span>
+      <span ng-hide="user">
+        <p>Welcome! Please login!</p>
+        <label for="username">Email</label><input type="text" name="username" ng-model="login_form.email"><br>
+        <label for="password">Password</label><input type="password" name="password" ng-model="login_form.password"><br>
+        <button name="login" id="login" ng-click="login()">login</button>
+      </span>
+    </div>
+    	<div ng-view>
+    	</div>
   </body>
 </html>
