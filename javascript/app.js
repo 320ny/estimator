@@ -20,9 +20,30 @@ app.config(['$locationProvider', '$routeProvider',
       });
   }]);
 
-app.controller('AuthController', ['$scope','$location','angularFire','angularFireAuth',function($scope, $location, angularFire, angularFireAuth){
+var registerFirebaseService = function (serviceName) {
+    app.factory(serviceName, function (angularFire) {
+        var _url = null;
+        var _ref = null;
+
+        return {
+            init: function (url) {
+                _url = url;
+                _ref = new Firebase(_url);
+            },
+            setToScope: function (scope, localScopeVarName) {
+                angularFire(_ref, scope, localScopeVarName);
+            }
+        };
+    });
+};
+
+registerFirebaseService('userService'); // create itemsService instance
+
+
+app.controller('AuthController', ['$scope','$location','angularFire','angularFireAuth', 'userService', function($scope, $location, angularFire, angularFireAuth, userService){
     var base_url = "https://320ny.firebaseio.com/";
     var firebase = new Firebase(base_url);
+
     $scope.myUser;
     $scope.login_form= {};
 
@@ -50,9 +71,8 @@ app.controller('AuthController', ['$scope','$location','angularFire','angularFir
     // authentication events
 
     $scope.$on("angularFireAuth:login", function(evt, user) {
-        var user_url = base_url+"users/"+user.id;
-        var user_firebase = new Firebase(user_url);
-        angularFire(user_firebase, $scope, "myUser");
+        userService.init(base_url+"users/"+user.id)
+        userService.setToScope($scope, 'myUser');
         $scope.myUser = user;
 
         $location.path("/projects");
@@ -67,7 +87,13 @@ app.controller('AuthController', ['$scope','$location','angularFire','angularFir
 
 }]);
 
-app.controller('ProjectShowController', ['$scope', 'angularFire', function($scope){
+app.controller('ProjectShowController', ['$scope', 'angularFire', 'userService', function($scope, angularFire, userService){
   var url = "https://320ny.firebaseio.com/"
   var firebase = new Firebase(url);
+  userService.setToScope($scope, 'myUser')
+  $scope.form_user = {};
+
+  $scope.updateToken = function(user){
+    $scope.myUser.pivotal_token = user.pivotal_token;
+  }
 }]);
