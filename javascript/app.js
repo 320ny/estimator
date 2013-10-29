@@ -20,31 +20,44 @@ app.config(['$locationProvider', '$routeProvider',
       });
   }]);
 
-app.controller('AuthController', ['$scope','$location','angularFireAuth',function($scope, $location,angularFireAuth){
-    var url = "https://320ny.firebaseio.com/";
-    var firebase = new Firebase(url);
+app.controller('AuthController', ['$scope','$location','angularFire','angularFireAuth',function($scope, $location, angularFire, angularFireAuth){
+    var base_url = "https://320ny.firebaseio.com/";
+    var firebase = new Firebase(base_url);
+    $scope.myUser;
     $scope.login_form= {};
+
     angularFireAuth.initialize(firebase, {
-      scope: $scope, name: "user",
-      callback: function(err, user) {
-      }
+      scope: $scope, 
+      name: "user",
+      path: "#",
     });
+
+    //authentication actions
 
     $scope.login = function() {
       var email = $scope.login_form.email;
       var password = $scope.login_form.password;
-     angularFireAuth.login('password',{
-      email: email,
-      password: password 
-     });
+      angularFireAuth.login('password',{
+        email: email,
+        password: password 
+      });
     };
     $scope.logout = function() {
       angularFireAuth.logout();
     };
 
+
+    // authentication events
+
     $scope.$on("angularFireAuth:login", function(evt, user) {
-      $location.path("/projects");
+        var user_url = base_url+"users/"+user.id;
+        var user_firebase = new Firebase(user_url);
+        angularFire(user_firebase, $scope, "myUser");
+        $scope.myUser = user;
+
+        $location.path("/projects");
     });
+
     $scope.$on("angularFireAuth:logout", function(evt) {
       $location.path("#");
     });
