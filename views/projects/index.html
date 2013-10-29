@@ -3,5 +3,6 @@
 	<br>
 	<label for="pivotal_token">Token</label><input type="text" name="pivotal_token" ng-model="form_user.pivotal_token"><br>
 	<a href="#" ng-click="updateToken(form_user)">Add token</a>
-
+</div>
+<div id="projects_view" ng-show="myUser.pivotal_token" ng-init="loadPivotalUser()">
 </div>

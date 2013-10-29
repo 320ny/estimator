@@ -37,7 +37,7 @@ var registerFirebaseService = function (serviceName) {
     });
 };
 
-registerFirebaseService('userService'); // create itemsService instance
+registerFirebaseService('userService'); // create userService instance
 
 
 app.controller('AuthController', ['$scope','$location','angularFire','angularFireAuth', 'userService', function($scope, $location, angularFire, angularFireAuth, userService){
@@ -87,7 +87,7 @@ app.controller('AuthController', ['$scope','$location','angularFire','angularFir
 
 }]);
 
-app.controller('ProjectShowController', ['$scope', 'angularFire', 'userService', function($scope, angularFire, userService){
+app.controller('ProjectShowController', ['$scope', 'angularFire', 'userService', '$http', function($scope, angularFire, userService, $http){
   var url = "https://320ny.firebaseio.com/"
   var firebase = new Firebase(url);
   userService.setToScope($scope, 'myUser')
@@ -95,5 +95,9 @@ app.controller('ProjectShowController', ['$scope', 'angularFire', 'userService',
 
   $scope.updateToken = function(user){
     $scope.myUser.pivotal_token = user.pivotal_token;
-  }
+  };
+
+  $scope.loadPivotalUser = function(){
+    $http({ method: 'GET', url: 'http://www.pivotaltracker.com/services/v3/projects', headers: { 'X-TrackerToken': $scope.myUser.pivotal_token }}).then(function(res) { console.log(res.data) });
+  };
 }]);
