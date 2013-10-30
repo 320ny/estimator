@@ -75,7 +75,8 @@ app.controller('AuthController', ['$scope','$location','angularFire','angularFir
     $scope.$on("angularFireAuth:login", function(evt, user) {
         userService.init(firebase_settings.baseUrl+"users/"+user.id)
         userService.setToScope($scope, 'myUser');
-        if($scope.myUser == {}){
+        console.log($scope.myUser)
+        if($scope.myUser == undefined){
           $scope.myUser = user;
         }
         $location.path("/projects");
