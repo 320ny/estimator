@@ -1,1 +1,8 @@
-{{project_id}}
+<div>
+    <label for="state">Search</label><input type="text" name="state" ng-model="search"><br>
+	<ul>
+		<li ng-repeat="story in stories | filter:search">
+			<story-listing story="story">
+		</li>
+	</ul>
+</div>

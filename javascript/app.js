@@ -76,8 +76,9 @@ app.controller('AuthController', ['$scope','$location','angularFire','angularFir
     $scope.$on("angularFireAuth:login", function(evt, user) {
         userService.init(base_url+"users/"+user.id)
         userService.setToScope($scope, 'myUser');
-        $scope.myUser = user;
-
+        if($scope.myUser == {}){
+          $scope.myUser = user;
+        }
         $location.path("/projects");
     });
 
@@ -113,6 +114,9 @@ app.controller('ProjectIndexController', ['$scope', 'angularFire', 'userService'
   };
 }]);
 
+
+/// directives
+
 app.directive('projectListing', ['$http', function($http) {
 
   return {
@@ -126,15 +130,40 @@ app.directive('projectListing', ['$http', function($http) {
 
 }]);
 
+app.directive('storyListing', ['$http', function($http){
+
+  return {
+    restrict: 'E',
+    replace: true,
+    templateUrl: 'views/stories/_listing.html',
+    scope: {
+      story: '=story'
+    }
+  }
+}]);
+
+
+
+// channel controller
 
 app.controller("ProjectChannelController", ['$scope', 'angularFire', 'userService', '$http', 'firebase_settings', '$routeParams', function($scope, angularFire, userService, $http, firebase_settings, $routeParams){
-  userService.setToScope($scope, 'myUser');
   $scope.project_id = parseInt($routeParams.projectId);
-  console.log($scope.myUser);
-  $http({method: 'GET', url:'https://www.pivotaltracker.com/services/v5/projects/'+$scope.project_id+'/stories'}).then(function(res) { 
+  $scope.search = {};
+  $scope.$watch('myUser', function(newValue, oldValue) {
+    if(newValue != undefined){
+      $scope.loadStories();
+    }
+
+  });
+  userService.setToScope($scope, 'myUser');
+
+  $scope.loadStories = function(){
+    $http({method: 'GET', url:'https://www.pivotaltracker.com/services/v5/projects/'+$scope.project_id+'/stories'}).then(function(res) { 
       $scope.myUser.projects[$scope.project_id].stories = {};
       angular.forEach(res.data, function(value, key){
         $scope.myUser.projects[$scope.project_id].stories[value.id] = value;
       });
+      $scope.stories = $scope.myUser.projects[$scope.project_id].stories;
     });
+  }
 }]);
