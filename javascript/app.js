@@ -44,7 +44,6 @@ registerFirebaseService('userService'); // create userService instance
 
 
 app.controller('AuthController', ['$scope','$location','angularFire','angularFireAuth', 'userService', 'firebase_settings', function($scope, $location, angularFire, angularFireAuth, userService, firebase_settings){
-    var base_url = "https://320ny.firebaseio.com/";
     var firebase = new Firebase(firebase_settings.baseUrl);
 
     $scope.myUser;
@@ -74,7 +73,7 @@ app.controller('AuthController', ['$scope','$location','angularFire','angularFir
     // authentication events
 
     $scope.$on("angularFireAuth:login", function(evt, user) {
-        userService.init(base_url+"users/"+user.id)
+        userService.init(firebase_settings.baseUrl+"users/"+user.id)
         userService.setToScope($scope, 'myUser');
         if($scope.myUser == {}){
           $scope.myUser = user;
@@ -146,9 +145,8 @@ app.directive('storyListing', ['$http', function($http){
 
 // channel controller
 
-app.controller("ProjectChannelController", ['$scope', 'angularFire', 'userService', '$http', 'firebase_settings', '$routeParams', function($scope, angularFire, userService, $http, firebase_settings, $routeParams){
+app.controller("ProjectChannelController", ['$scope', 'angularFire', 'userService', '$http', 'firebase_settings', '$routeParams', 'angularFireCollection', function($scope, angularFire, userService, $http, firebase_settings, $routeParams, angularFireCollection){
   $scope.project_id = parseInt($routeParams.projectId);
-  $scope.search = {};
   $scope.$watch('myUser', function(newValue, oldValue) {
     if(newValue != undefined){
       $scope.loadStories();
@@ -158,12 +156,13 @@ app.controller("ProjectChannelController", ['$scope', 'angularFire', 'userServic
   userService.setToScope($scope, 'myUser');
 
   $scope.loadStories = function(){
+    var firebase = new Firebase(firebase_settings.baseUrl+"users/"+$scope.myUser.id+"/projects/"+$scope.project_id+"/stories");
+    $scope.stories = angularFireCollection(firebase);
     $http({method: 'GET', url:'https://www.pivotaltracker.com/services/v5/projects/'+$scope.project_id+'/stories'}).then(function(res) { 
       $scope.myUser.projects[$scope.project_id].stories = {};
       angular.forEach(res.data, function(value, key){
         $scope.myUser.projects[$scope.project_id].stories[value.id] = value;
       });
-      $scope.stories = $scope.myUser.projects[$scope.project_id].stories;
     });
   }
 }]);
