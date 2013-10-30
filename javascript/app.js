@@ -20,6 +20,7 @@ app.config(['$locationProvider', '$routeProvider',
       });
   }]);
 
+
 var registerFirebaseService = function (serviceName) {
     app.factory(serviceName, function (angularFire) {
         var _url = null;
@@ -88,16 +89,18 @@ app.controller('AuthController', ['$scope','$location','angularFire','angularFir
 }]);
 
 app.controller('ProjectShowController', ['$scope', 'angularFire', 'userService', '$http', function($scope, angularFire, userService, $http){
-  var url = "https://320ny.firebaseio.com/"
-  var firebase = new Firebase(url);
-  userService.setToScope($scope, 'myUser')
-  $scope.form_user = {};
 
   $scope.updateToken = function(user){
     $scope.myUser.pivotal_token = user.pivotal_token;
   };
 
-  $scope.loadPivotalUser = function(){
-    $http({ method: 'GET', url: 'http://www.pivotaltracker.com/services/v3/projects', headers: { 'X-TrackerToken': $scope.myUser.pivotal_token }}).then(function(res) { console.log(res.data) });
+  $scope.linkUser = function(){
+    userService.setToScope($scope, 'myUser')
+    $scope.form_user = {};
+  }
+
+  $scope.loadPivotalProjects = function(){
+    $http.defaults.headers.common['X-TrackerToken'] = $scope.myUser.pivotal_token;
+    $http({method: 'GET', url:'http://www.pivotaltracker.com/services/v5/projects'}).then(function(res) { console.log(res.data) });
   };
 }]);
