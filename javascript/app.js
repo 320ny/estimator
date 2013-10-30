@@ -101,6 +101,8 @@ app.controller('ProjectShowController', ['$scope', 'angularFire', 'userService',
 
   $scope.loadPivotalProjects = function(){
     $http.defaults.headers.common['X-TrackerToken'] = $scope.myUser.pivotal_token;
-    $http({method: 'GET', url:'http://www.pivotaltracker.com/services/v5/projects'}).then(function(res) { console.log(res.data) });
-  };
+    $http({method: 'GET', url:'https://www.pivotaltracker.com/services/v5/projects'}).then(function(res) { 
+
+      console.log(res.data) });
+    };
 }]);
