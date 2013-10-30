@@ -16,7 +16,7 @@ app.config(['$locationProvider', '$routeProvider',
         authRequired: 'true'
       }).
       otherwise({
-        redirectTo: ''
+        redirectTo: ""
       });
   }]);
 app.constant('firebase_settings', {
@@ -75,11 +75,10 @@ app.controller('AuthController', ['$scope','$location','angularFire','angularFir
     $scope.$on("angularFireAuth:login", function(evt, user) {
         userService.init(firebase_settings.baseUrl+"users/"+user.id)
         userService.setToScope($scope, 'myUser');
-        console.log($scope.myUser)
         if($scope.myUser == undefined){
           $scope.myUser = user;
         }
-        $location.path("/projects");
+        $location.path("#/projects");
     });
 
     $scope.$on("angularFireAuth:logout", function(evt) {
@@ -91,7 +90,7 @@ app.controller('AuthController', ['$scope','$location','angularFire','angularFir
 
 }]);
 
-app.controller('ProjectIndexController', ['$scope', 'angularFire', 'userService', '$http', 'firebase_settings', function($scope, angularFire, userService, $http, firebase_settings){
+app.controller('ProjectIndexController', ['$scope', '$location', 'angularFire', 'userService', '$http', 'firebase_settings', function($scope, $location, angularFire, userService, $http, firebase_settings){
 
   $scope.updateToken = function(user){
     $scope.myUser.pivotal_token = user.pivotal_token;

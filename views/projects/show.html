@@ -1,8 +1,10 @@
 <div>
     <label for="state">Search</label><input type="text" name="state" ng-model="search"><br>
-	<ul>
-		<li ng-repeat="story in stories | filter:search">
-			<story-listing story="story"></story-listing>
-		</li>
-	</ul>
+    <div ng-show="stories">
+		<ul>
+			<li ng-repeat="story in stories | filter:search">
+				<story-listing story="story"></story-listing>
+			</li>
+		</ul>
+	</div>
 </div>
