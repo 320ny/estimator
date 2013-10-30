@@ -7,7 +7,7 @@ app.config(['$locationProvider', '$routeProvider',
     $routeProvider.
       when('/projects', {
         templateUrl: 'views/projects/index.html',
-        controller: 'ProjectShowController',
+        controller: 'ProjectIndexController',
         authRequired: 'true'
       }).
       when('/projects/:projectId', {
@@ -19,7 +19,9 @@ app.config(['$locationProvider', '$routeProvider',
         redirectTo: ''
       });
   }]);
-
+app.constant('firebase_settings', {
+    baseUrl: 'https://320ny.firebaseio.com/'
+});
 
 var registerFirebaseService = function (serviceName) {
     app.factory(serviceName, function (angularFire) {
@@ -41,9 +43,9 @@ var registerFirebaseService = function (serviceName) {
 registerFirebaseService('userService'); // create userService instance
 
 
-app.controller('AuthController', ['$scope','$location','angularFire','angularFireAuth', 'userService', function($scope, $location, angularFire, angularFireAuth, userService){
+app.controller('AuthController', ['$scope','$location','angularFire','angularFireAuth', 'userService', 'firebase_settings', function($scope, $location, angularFire, angularFireAuth, userService, firebase_settings){
     var base_url = "https://320ny.firebaseio.com/";
-    var firebase = new Firebase(base_url);
+    var firebase = new Firebase(firebase_settings.baseUrl);
 
     $scope.myUser;
     $scope.login_form= {};
@@ -88,7 +90,7 @@ app.controller('AuthController', ['$scope','$location','angularFire','angularFir
 
 }]);
 
-app.controller('ProjectShowController', ['$scope', 'angularFire', 'userService', '$http', function($scope, angularFire, userService, $http){
+app.controller('ProjectIndexController', ['$scope', 'angularFire', 'userService', '$http', 'firebase_settings', function($scope, angularFire, userService, $http, firebase_settings){
 
   $scope.updateToken = function(user){
     $scope.myUser.pivotal_token = user.pivotal_token;
@@ -100,9 +102,39 @@ app.controller('ProjectShowController', ['$scope', 'angularFire', 'userService',
   }
 
   $scope.loadPivotalProjects = function(){
+
     $http.defaults.headers.common['X-TrackerToken'] = $scope.myUser.pivotal_token;
     $http({method: 'GET', url:'https://www.pivotaltracker.com/services/v5/projects'}).then(function(res) { 
+      $scope.myUser.projects = {};
+      angular.forEach(res.data, function(value, key){
+        $scope.myUser.projects[value.id] = value;
+      });
+    });
+  };
+}]);
 
-      console.log(res.data) });
-    };
+app.directive('projectListing', ['$http', function($http) {
+
+  return {
+    restrict: 'E',
+    replace: true,
+    templateUrl: 'views/projects/_listing.html',
+    scope: {
+      project : '=project'
+    }
+  }
+
+}]);
+
+
+app.controller("ProjectChannelController", ['$scope', 'angularFire', 'userService', '$http', 'firebase_settings', '$routeParams', function($scope, angularFire, userService, $http, firebase_settings, $routeParams){
+  userService.setToScope($scope, 'myUser');
+  $scope.project_id = parseInt($routeParams.projectId);
+  console.log($scope.myUser);
+  $http({method: 'GET', url:'https://www.pivotaltracker.com/services/v5/projects/'+$scope.project_id+'/stories'}).then(function(res) { 
+      $scope.myUser.projects[$scope.project_id].stories = {};
+      angular.forEach(res.data, function(value, key){
+        $scope.myUser.projects[$scope.project_id].stories[value.id] = value;
+      });
+    });
 }]);

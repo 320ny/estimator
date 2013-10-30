@@ -8,5 +8,11 @@
 	<div id="projects_view" ng-show="myUser.pivotal_token">
 		Your pivotal token: {{myUser.pivotal_token}}
 		<a ng-click="loadPivotalProjects()">Load Pivotal Projects</a>
+		<hr />
+		<ul>
+			<li ng-repeat="project in myUser.projects">
+				<project-listing project="project">
+			</li>
+		</ul>
 	</div>
 </div>
