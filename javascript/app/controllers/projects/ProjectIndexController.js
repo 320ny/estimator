@@ -20,7 +20,10 @@ app.controller('ProjectIndexController', ['$scope', '$location', 'angularFire', 
       $scope.myUser.projects = {};
       angular.forEach(res.data, function(value, key){
         $scope.myUser.projects[value.id] = {name: value.name, id: value.id};
-        $scope.projects[value.id] = {name: value.name, id: value.id};
+        
+        if($scope.projects[value.id] == undefined){
+          $scope.projects[value.id] = {name: value.name, id: value.id};
+        }
       });
     });
   };
