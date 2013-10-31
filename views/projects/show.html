@@ -1,10 +1,13 @@
 <div>
+	<div id="chat">
+      <div ng-repeat="msg in project.messages"><em>{{msg.from}}</em>: {{msg.body}}</div>
+    </div>
+    <input type="text" ng-model="msg" ng-keydown="addMessage($event)" placeholder="Message...">
+    
     <label for="state">Search</label><input type="text" name="state" ng-model="search"><br>
-    <div ng-show="stories">
-		<ul>
-			<li ng-repeat="story in stories | filter:search">
-				<story-listing story="story"></story-listing>
-			</li>
-		</ul>
-	</div>
+	<ul>
+		<li ng-repeat="story in project.stories">
+			<story-listing story="story"></story-listing>
+		</li>
+	</ul>
 </div>
