@@ -24,8 +24,30 @@ var registerFirebaseService = function (serviceName) {
 registerFirebaseService('userService'); // create userService instance
 registerFirebaseService('projectService'); // create projectService instance
 
+// filters
+
+app.filter('toArray', function() {
+    return function(input) {
+        return _.toArray(input);
+    }
+}).filter('split', function() {
+    return function(input,delim) {
+        return input.split(delim);
+    };
+});
 
 /// directives
+
+app.directive('preventDefault',[
+    function() {
+        return function($scope,$el,$attrs) {
+            var evt = $attrs.preventDefault || 'click';
+            $el.bind(evt,function(e) {
+                e.preventDefault();
+            });
+        }
+    }
+]);
 
 app.directive('projectListing', ['$http', function($http) {
 
@@ -40,14 +62,15 @@ app.directive('projectListing', ['$http', function($http) {
 
 }]);
 
-app.directive('storyListing', ['$http', function($http){
+// app.directive('storyListing', ['$http', function($http){
 
-  return {
-    restrict: 'E',
-    replace: true,
-    templateUrl: 'views/stories/_listing.html',
-    scope: {
-      story: '=story'
-    }
-  }
-}]);
+//   return {
+//     restrict: 'E',
+//     replace: true,
+//     templateUrl: 'views/stories/_listing.html',
+//     controller: 'StoryController',
+//     scope: {
+//       story: '=story'
+//     }
+//   }
+// }]);

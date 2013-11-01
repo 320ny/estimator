@@ -14,6 +14,6 @@ app.config(['$locationProvider', '$routeProvider',
         authRequired: 'true'
       }).
       otherwise({
-        redirectTo: ""
+        redirectTo: "/"
       });
   }]);

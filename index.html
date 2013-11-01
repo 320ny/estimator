@@ -5,6 +5,7 @@
     <script src='https://cdn.firebase.com/v0/firebase-auth-client.js'></script>
     <script type="text/javascript" src="https://cdn.firebase.com/v0/firebase-simple-login.js"></script>
     <script src='https://cdn.firebase.com/libs/angularfire/0.3.0/angularfire.min.js'></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/2.2.1/lodash.min.js"></script>
     <script src="javascript/app.js"></script>
     <script src="javascript/app/controllers/AuthController.js"></script>
     <script src="javascript/app/controllers/projects/ProjectIndexController.js"></script>
@@ -15,7 +16,7 @@
   <body ng-controller="AuthController">
     <div id="login">
       <span ng-show="user">
-        {{user.email}} | <a href="#/projects">Projects</a> | <a href="#" ng-click="logout()">Logout</a>
+        {{user.email}} | <a href="#/projects">Projects</a> | <a prevent-default href="#" ng-click="logout()">Logout</a>
         <hr />
       </span>
       <span ng-hide="user">

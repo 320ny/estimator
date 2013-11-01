@@ -2,5 +2,6 @@
 	<h4>{{story.name}}</h4>
 	<p>{{story.description}}</p>
 	<p>{{story.current_state}}</p>
-	<p>Estimate: {{story.estimate}}</p>
+	<p ng-show="story.estimate">Estimate: {{story.estimate}} <a href="#" prevent-default ng-click="clearEstimate(story)">Clear Estimate</a></p>
+	<p ng-hide="story.estimate"><a href="#" prevent-default ng-click="estimateStory(story)">Esimate Story</a></p>
 </div>
